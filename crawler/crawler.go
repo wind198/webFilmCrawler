@@ -1,12 +1,12 @@
 package crawler
 
 import (
+	"database/sql"
 	"log"
 	"strconv"
 
-	todb "github.com/tuanlh1908developer/webFilmCrawler/toDB"
-
 	"github.com/gocolly/colly"
+	"github.com/tuanlh1908developer/webFilmCrawler/todb"
 )
 
 type Film struct {
@@ -19,7 +19,7 @@ type Film struct {
 	stars       []string
 }
 
-func Crawl() {
+func Crawl(db *sql.DB) {
 	c1 := colly.NewCollector(colly.Async(false))
 	// c1.Limit(&colly.LimitRule{Parallelism: 2})
 	c2 := colly.NewCollector(colly.Async(false))
@@ -64,7 +64,7 @@ func Crawl() {
 			writers:     writers,
 			stars:       stars,
 		}
-		rows, err := todb.InsertToDB(aFilm.title, aFilm.rating, aFilm.category, aFilm.description, aFilm.director, aFilm.writers, aFilm.stars)
+		rows, err := todb.InsertToDB(db, aFilm.title, aFilm.rating, aFilm.category, aFilm.description, aFilm.director, aFilm.writers, aFilm.stars)
 		if rows != 0 {
 			log.Printf("Insert for film %q suceed, %v affected\n", aFilm.title, rows)
 		} else {
