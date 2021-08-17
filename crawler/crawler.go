@@ -21,18 +21,16 @@ type Film struct {
 
 func Crawl(db *sql.DB) {
 	c1 := colly.NewCollector(colly.Async(false))
-	// c1.Limit(&colly.LimitRule{Parallelism: 2})
+	
 	c2 := colly.NewCollector(colly.Async(false))
-	// c2.Limit(&colly.LimitRule{Parallelism: 2})
+
 
 	c1.OnHTML("tbody.lister-list tr", func(e *colly.HTMLElement) {
 		link := e.ChildAttr("a[href]", "href")
 		c2.Visit(e.Request.AbsoluteURL(link))
 
 	})
-	// c2.OnRequest(func(r *colly.Request) {
-	// 	log.Println("Visiting", r.URL.String())
-	// })
+	
 	c2.OnHTML("section.ipc-page-background.ipc-page-background--base.TitlePage__StyledPageBackground-wzlr49-0.dDUGgO", func(e *colly.HTMLElement) {
 		title := e.ChildText("h1")
 		rating, err := strconv.ParseFloat(e.ChildText("div.Hero__ContentContainer-kvkd64-10.eaUohq span.AggregateRatingButton__RatingScore-sc-1ll29m0-1.iTLWoV"), 32)
